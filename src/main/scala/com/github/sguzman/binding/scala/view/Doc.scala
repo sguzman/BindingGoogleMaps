@@ -33,7 +33,7 @@ object Doc {
         panControl = false,
         streetViewControl = false,
         mapTypeControl = false)))
-      GoogleInit.init
+      GoogleInit.init(m.get)
       ""
     })
   }

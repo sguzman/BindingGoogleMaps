@@ -2,16 +2,15 @@ package com.github.sguzman.binding.scala
 
 import java.net.URLDecoder
 
-import com.github.sguzman.binding.scala.Main.{Globals, location, m}
+import com.github.sguzman.binding.scala.Main.{Globals, MarkerClusterer, location, m}
 import com.github.sguzman.binding.scala.typesafe.data.trip.{Loc, Pinpoint, Trip}
 import org.scalajs.dom.raw.Position
 import org.scalajs.dom.window
-
 import io.circe.parser.decode
 import io.circe.generic.auto._
 
 import scala.scalajs.js
-import scala.scalajs.js.JSON
+import scala.scalajs.js.{JSON, UndefOr}
 import scala.scalajs.niocharset.StandardCharsets.UTF_8
 
 object GoogleInit {
@@ -49,11 +48,18 @@ object GoogleInit {
       .filter(_.length == 3)
       .map(t => Loc(t.head.asInstanceOf[Pinpoint], t.tail.head.asInstanceOf[Pinpoint], t.last.asInstanceOf[Trip]))
 
-  def init = {
+  def marker(l: Loc) =
+    new google.maps.Marker(
+      google.maps.MarkerOptions(
+        map = null,
+        position = l.pick.latlng,
+      )
+    )
+
+  def init(m: google.maps.Map) = {
     geo
-    parseData(Globals.items).map(t => new google.maps.Marker(google.maps.MarkerOptions(
-      map = m.get,
-      position = t.pick.latlng
-    )))
+    Main.items.append(parseData(Globals.items).map(marker): _*)
+    val down = new MarkerClusterer(m, js.Array[google.maps.Marker](Main.items: _*),
+      js.Dynamic.literal(imagePath = "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"))
   }
 }
