@@ -43,7 +43,7 @@ object GoogleInit {
 
   def parseData(j: js.Array[js.Object]) =
     (for (i <- Globals.items) yield i.trip)
-      .map(t => pickDropSwitch(t.asInstanceOf[Trip]))
+      .map(pickDropSwitch)
       .filter(_.isDefined)
       .map(_.get)
       .filter(_.length == 3)
