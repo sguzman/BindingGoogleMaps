@@ -1,37 +1,45 @@
 package com.github.sguzman.binding.scala
 
+import java.net.URLDecoder
+
+import com.github.sguzman.binding.scala.typesafe.data.trip.{Loc, Pinpoint, Trip}
+import com.github.sguzman.binding.scala.view.Doc
+import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import google.maps.LatLng
-import org.scalajs.dom.{document, window}
-import org.scalajs.dom.html.{Div, Element}
+import org.scalajs.dom.{Event, document, window}
+import org.scalajs.dom.html.{Button, Div, Element, Table}
+import org.scalajs.dom.raw.Position
 
 import scala.scalajs.js
+import scala.scalajs.js.JSON
+import scala.scalajs.js.annotation.{JSGlobal, JSGlobalScope}
+import scala.scalajs.niocharset.StandardCharsets
+import scala.scalajs.niocharset.StandardCharsets.UTF_8
+import view.Doc.StrWrap
 
 object Main {
-  implicit final class StrWrap(str: String) {
-    def id = document.getElementById(str)
-    def id[A] = document.getElementById(str).asInstanceOf[A]
-  }
+  var m: Option[google.maps.Map] = None
+  val location: google.maps.Marker = new google.maps.Marker
 
-  @dom def _render: Binding[Div] = {
-    <div id="map"></div>
-  }
 
-  def render = _render
+  @js.native
+  @JSGlobalScope
+  object Globals extends js.Object {
+    var items: js.Array[js.Object] = js.native
+  }
 
   def main(args: Array[String]): Unit = {
-    dom.render(document.body, render)
-
-    "map".id[Element].style.height = (window.screen.availHeight - 100).toString ++ "px"
-
+    Doc.render(Var(false))
 
     google.maps.event.addDomListener(window, "load", js.Function {
-      new google.maps.Map(document.getElementById("map"), google.maps.MapOptions(
-        center = new LatLng(37.675554, -122.276105),
+      m = Some(new google.maps.Map("map".id, google.maps.MapOptions(
+        center = new google.maps.LatLng(37.675554, -122.276105),
         zoom = 10,
         panControl = false,
         streetViewControl = false,
-        mapTypeControl = true))
+        mapTypeControl = false)))
+      GoogleInit.init
       ""
     })
   }
