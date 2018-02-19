@@ -6,8 +6,24 @@
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAqHHS4KxDslYxulzzzmBPYLwifll859k"></script>
     <style>
+        body {
+            margin: 0;
+        }
         #map {
             width: 100%;
+        }
+
+        #overlay {
+            position: fixed; /* Sit on top of the page content */
+            display: none; /* Hidden by default */
+            width: 100%; /* Full width (cover the whole page) */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgb(255,255,255); /* Black background with opacity */
+            z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+            overflow: scroll;
         }
     </style>
     <script src="./items.js"></script>
